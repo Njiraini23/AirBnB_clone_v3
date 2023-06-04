@@ -11,6 +11,7 @@ from models.user import User
 from models.place import Place
 from models.city import City
 
+
 class HBNBCommand(cmd.Cmd):
     """ A class for the HBNB console"""
 
@@ -203,7 +204,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
