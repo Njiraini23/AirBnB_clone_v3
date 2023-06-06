@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+ #!/usr/bin/python3
 """
 Contains the class DBStorage
 """
@@ -64,32 +64,6 @@ class DBStorage:
         if obj is not None:
             self.__session.delete(obj)
 
-    def get(self, cls, id):
-        """A method to retrieve one object:
-           returns the object based on the class and its ID, or None
-        """
-        if cls not in classes.values():
-            return None
-        all_cls = models.storage.all(cls)
-        for value in all_cls.values():
-            if value.id == id:
-                return value
-        return None
-
-    def count(self, cls=None):
-        """A method to count the number of objects in storage:
-        Returns the number of objects in storage matching the given class.
-        If no class is passed, returns the count of all objects in storage.
-        """
-        all_clss = classes.values()
-        if cls is None:
-            count = 0
-            for clas in all_clss:
-                count += len(models.storage.all(clas).values())
-        count = len(models.storage.all(cls).values())
-
-        return count
-
     def reload(self):
         """reloads data from the database"""
         Base.metadata.create_all(self.__engine)
@@ -100,3 +74,25 @@ class DBStorage:
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def get(self, cls, id):
+        """
+        Returns the object based on the class name and its ID, or None if not
+        found
+        """
+        objects = self.__session.query(classes[cls])
+        for obj in objects:
+            if obj.id == id:
+                return obj
+        return None
+
+    def count(self, cls=None):
+        """
+        Returns the number of objects in storage matching the given class name.
+        If no name is passed, returns the count of all objects in storage.
+        """
+        nobjects = 0
+        for clss in classes:
+            if cls is None or cls is classes[clss] or cls is clss:
+                nobjects += len(self.__session.query(classes[clss]).all())
+        return nobjects   
